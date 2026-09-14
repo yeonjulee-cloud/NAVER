@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>품고 운영 가이드</title>
+<style>
+  :root {
+    --primary: #2f5496;
+    --primary-light: #eaf0fb;
+    --accent: #d9822b;
+    --accent-light: #fdf1e2;
+    --bg: #f5f6f8;
+    --sidebar-bg: #ffffff;
+    --panel-bg: #ffffff;
+    --border: #e2e5ea;
+    --text: #1f2430;
+    --text-sub: #6b7280;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  .shell {
+    display: flex;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  /* ---------------- sidebar ---------------- */
+  .sidebar {
+    width: 280px;
+    flex: none;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: margin-left 0.2s ease;
+  }
+  .sidebar-header {
+    padding: 18px 16px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-title {
+    font-size: 15px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 12px;
+  }
+  .search-box {
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 8px 12px 8px 30px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    background: var(--bg);
+  }
+  .search-box input:focus { outline: none; border-color: var(--primary); background: #fff; }
+  .search-box::before {
+    content: "🔍";
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    font-size: 11px; opacity: 0.55;
+  }
+  .write-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .write-btn:hover { background: #24406f; }
+
+  .sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 8px 24px;
+  }
+  .nav-group { margin-bottom: 4px; }
+  .nav-group-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 8px 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+  }
+  .nav-group-label .chev { font-size: 10px; transition: transform 0.15s ease; }
+  .nav-group.collapsed .chev { transform: rotate(-90deg); }
+  .nav-group.collapsed .nav-items { display: none; }
+  .nav-sub-label {
+    padding: 6px 8px 2px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    margin: 1px 0;
+    border-radius: 7px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-item:hover { background: var(--bg); }
+  .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+  .nav-item .pin { font-size: 10px; flex: none; }
+  .nav-item .title { overflow: hidden; text-overflow: ellipsis; }
+  .nav-empty { padding: 20px 12px; font-size: 12.5px; color: var(--text-sub); text-align: center; }
+
+  /* ---------------- main panel ---------------- */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100%;
+  }
+  .topbar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--sidebar-bg);
+  }
+  .hamburger {
+    border: none; background: none; font-size: 18px; cursor: pointer; padding: 4px 6px;
+  }
+  .topbar .topbar-title { font-size: 14px; font-weight: 800; }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px 48px 80px;
+  }
+
+  .empty-state {
+    max-width: 480px;
+    margin: 10vh auto 0;
+    text-align: center;
+    color: var(--text-sub);
+  }
+  .empty-state .big { font-size: 40px; margin-bottom: 14px; }
+  .empty-state h2 { font-size: 17px; color: var(--text); margin: 0 0 8px; }
+  .empty-state p { font-size: 13.5px; line-height: 1.6; margin: 0; }
+
+  .doc-badges { display: flex; gap: 6px; margin-bottom: 14px; }
+  .badge {
+    font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  }
+  .badge-manual { background: var(--primary-light); color: var(--primary); }
+  .badge-notice { background: var(--accent-light); color: var(--accent); }
+  .badge-pinned { background: #fdecea; color: #c0392b; }
+
+  .doc-title { font-size: 26px; font-weight: 800; margin: 0 0 10px; line-height: 1.35; }
+  .doc-meta { font-size: 13px; color: var(--text-sub); margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .doc-body { font-size: 15px; line-height: 1.85; white-space: pre-wrap; max-width: 68ch; }
+  .doc-tags { margin-top: 32px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 12px; background: var(--bg); color: var(--text-sub); padding: 4px 10px; border-radius: 999px; }
+
+  /* ---------------- write modal ---------------- */
+  .overlay {
+    display: none; position: fixed; inset: 0; background: rgba(20,24,33,0.45);
+    align-items: flex-start; justify-content: center; padding: 5vh 16px; overflow-y: auto; z-index: 100;
+  }
+  .overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 620px; padding: 26px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .modal-header .t { font-size: 16px; font-weight: 800; }
+  .modal-close { background: none; border: none; font-size: 19px; cursor: pointer; color: var(--text-sub); }
+  .form-row { margin-bottom: 13px; }
+  .form-row label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 5px; }
+  .form-row input, .form-row select, .form-row textarea {
+    width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 7px; font-size: 13.5px; font-family: inherit;
+  }
+  .form-row textarea { min-height: 140px; resize: vertical; }
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .form-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  .btn { border: none; border-radius: 7px; padding: 9px 15px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--text-sub); }
+  .checkbox-row { display: flex; align-items: center; gap: 7px; font-size: 13px; }
+  .checkbox-row input { width: auto; }
+
+  .write-result { display: none; }
+  .write-result.show { display: block; }
+  .write-result-guide {
+    font-size: 12.5px; line-height: 1.6; color: var(--text-sub);
+    background: var(--primary-light); border-radius: 8px; padding: 11px 13px; margin: 0 0 12px;
+  }
+  .write-result-guide code {
+    background: rgba(0,0,0,0.06); border-radius: 4px; padding: 1px 5px; font-size: 12px;
+  }
+  #writeResultJson {
+    background: #1f2430; color: #e7ebf3; border-radius: 8px; padding: 14px 16px;
+    font-size: 12.5px; line-height: 1.6; overflow-x: auto; white-space: pre; margin: 0;
+    font-family: Consolas, "SF Mono", Menlo, monospace;
+  }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px;
+    opacity: 0; pointer-events: none; transition: all 0.2s ease; z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------------- mobile ---------------- */
+  .scrim {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 40;
+  }
+  @media (max-width: 760px) {
+    .topbar { display: flex; }
+    .sidebar {
+      position: fixed; z-index: 50; top: 0; left: 0; bottom: 0;
+      margin-left: -280px;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+    .sidebar.open { margin-left: 0; box-shadow: 8px 0 24px rgba(0,0,0,0.15); }
+    .scrim.show { display: block; }
+    .content { padding: 24px 18px 60px; }
+    .doc-title { font-size: 21px; }
+    .form-grid-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <div class="scrim" id="scrim"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <p class="sidebar-title">📘 품고 운영 가이드</p>
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="검색" />
+      </div>
+      <button class="write-btn" id="openWriteBtn">+ 새 글 등록</button>
+    </div>
+    <nav class="sidebar-scroll" id="navScroll">
+      <!-- rendered by JS -->
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" id="hamburgerBtn">☰</button>
+      <span class="topbar-title">품고 운영 가이드</span>
+    </div>
+    <div class="content" id="content">
+      <div class="empty-state">
+        <div class="big">📘</div>
+        <h2>왼쪽에서 글을 선택하세요</h2>
+        <p>매뉴얼과 이슈·공지가 왼쪽 사이드바에 정리되어 있어요. 클릭하면 여기 오른쪽에 바로 내용이 나옵니다.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 글쓰기 모달 -->
+<div class="overlay" id="writeOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="t">새 글 등록</div>
+      <button class="modal-close" data-close="writeOverlay">✕</button>
+    </div>
+    <form id="writeForm">
+      <div class="form-row form-grid-2">
+        <div>
+          <label>카테고리</label>
+          <select id="fCategory">
+            <option value="매뉴얼">매뉴얼</option>
+            <option value="이슈/공지">이슈·공지</option>
+          </select>
+        </div>
+        <div>
+          <label>소분류 (예: 입고, 반품, 재출고)</label>
+          <input id="fSubcategory" type="text" placeholder="선택 입력" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label>제목 *</label>
+        <input id="fTitle" type="text" required />
+      </div>
+      <div class="form-row">
+        <label>내용 *</label>
+        <textarea id="fContent" required></textarea>
+      </div>
+      <div class="form-row form-grid-2">
+        <div>
+          <label>작성자</label>
+          <input id="fAuthor" type="text" placeholder="이름" />
+        </div>
+        <div>
+          <label>태그 (쉼표로 구분)</label>
+          <input id="fTags" type="text" placeholder="예: 반품,진천센터" />
+        </div>
+      </div>
+      <div class="form-row checkbox-row">
+        <input id="fPinned" type="checkbox" />
+        <label for="fPinned" style="margin:0;">상단 고정 (공지사항용)</label>
+      </div>
+      <div class="form-footer">
+        <button type="button" class="btn btn-ghost" data-close="writeOverlay">취소</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">JSON 만들기</button>
+      </div>
+    </form>
+
+    <div id="writeResultBox" class="write-result">
+      <p class="write-result-guide">
+        아래 내용을 복사해서 깃헙 저장소의 <code>posts.json</code> 파일을 열고,
+        맨 앞 <code>[</code> 바로 다음에 붙여넣은 뒤(뒤에 오는 글과는 콤마 <code>,</code>로 구분) 커밋하세요.
+      </p>
+      <pre id="writeResultJson"></pre>
+      <div class="form-footer">
+        <button type="button" class="btn btn-ghost" id="writeAgainBtn">다시 작성</button>
+        <button type="button" class="btn btn-primary" id="copyJsonBtn">복사하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ────────────────────────────────────────────────────────
+  // 같은 저장소 안의 posts.json 파일에서 글 목록을 읽어옵니다.
+  // 새 글은 서버 없이, 이 posts.json 파일을 깃헙에서 직접 편집해서 추가합니다.
+  const DATA_URL = "./posts.json";
+  // ────────────────────────────────────────────────────────
+
+  const state = { posts: [], filtered: [], query: '', selectedId: null, collapsed: {} };
+
+  const navScroll = document.getElementById('navScroll');
+  const content = document.getElementById('content');
+  const searchInput = document.getElementById('searchInput');
+  const sidebar = document.getElementById('sidebar');
+  const scrim = document.getElementById('scrim');
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function fmtDate(v) {
+    const d = new Date(v);
+    if (isNaN(d)) return v;
+    return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => closeModal(el.dataset.close)));
+  document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); }));
+
+  // 모바일 사이드바 토글
+  document.getElementById('hamburgerBtn').addEventListener('click', () => {
+    sidebar.classList.add('open'); scrim.classList.add('show');
+  });
+  scrim.addEventListener('click', () => { sidebar.classList.remove('open'); scrim.classList.remove('show'); });
+
+  function buildNav() {
+    const list = state.filtered;
+    if (list.length === 0) {
+      navScroll.innerHTML = `<div class="nav-empty">검색 결과가 없어요</div>`;
+      return;
+    }
+
+    const notices = list.filter(p => p.category === '이슈/공지').sort((a,b) => (b.pinned - a.pinned) || (new Date(b.createdAt) - new Date(a.createdAt)));
+    const manuals = list.filter(p => p.category !== '이슈/공지');
+
+    const bySub = {};
+    manuals.forEach(p => {
+      const key = p.subcategory && p.subcategory.trim() ? p.subcategory.trim() : '기타';
+      (bySub[key] = bySub[key] || []).push(p);
+    });
+
+    let html = '';
+
+    if (notices.length) {
+      html += navGroupHtml('이슈·공지', 'notice', notices.map(p => navItemHtml(p)).join(''));
+    }
+    if (manuals.length) {
+      let subHtml = '';
+      Object.keys(bySub).sort().forEach(sub => {
+        subHtml += `<div class="nav-sub-label">${escapeHtml(sub)}</div>`;
+        subHtml += bySub[sub].map(p => navItemHtml(p)).join('');
+      });
+      html += navGroupHtml('매뉴얼', 'manual', subHtml);
+    }
+
+    navScroll.innerHTML = html;
+
+    navScroll.querySelectorAll('.nav-group-label').forEach(el => {
+      el.addEventListener('click', () => {
+        const group = el.closest('.nav-group');
+        group.classList.toggle('collapsed');
+        state.collapsed[group.dataset.key] = group.classList.contains('collapsed');
+      });
+    });
+    navScroll.querySelectorAll('.nav-item').forEach(el => {
+      el.addEventListener('click', () => selectPost(el.dataset.id));
+    });
+  }
+
+  function navGroupHtml(label, key, itemsHtml) {
+    const collapsed = state.collapsed[key] ? 'collapsed' : '';
+    return `
+      <div class="nav-group ${collapsed}" data-key="${key}">
+        <div class="nav-group-label"><span>${label}</span><span class="chev">▾</span></div>
+        <div class="nav-items">${itemsHtml}</div>
+      </div>`;
+  }
+  function navItemHtml(p) {
+    const active = String(p.id) === String(state.selectedId) ? 'active' : '';
+    return `<div class="nav-item ${active}" data-id="${p.id}">
+      ${p.pinned ? '<span class="pin">📌</span>' : ''}
+      <span class="title">${escapeHtml(p.title)}</span>
+    </div>`;
+  }
+
+  function renderDetail(post) {
+    let badges = '';
+    if (post.pinned) badges += `<span class="badge badge-pinned">📌 고정</span>`;
+    badges += post.category === '매뉴얼'
+      ? `<span class="badge badge-manual">매뉴얼${post.subcategory ? ' · ' + escapeHtml(post.subcategory) : ''}</span>`
+      : `<span class="badge badge-notice">이슈·공지${post.subcategory ? ' · ' + escapeHtml(post.subcategory) : ''}</span>`;
+
+    const tags = (post.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+
+    content.innerHTML = `
+      <div class="doc-badges">${badges}</div>
+      <h1 class="doc-title">${escapeHtml(post.title)}</h1>
+      <div class="doc-meta">${escapeHtml(post.author || '익명')} · ${fmtDate(post.createdAt)}</div>
+      <div class="doc-body">${escapeHtml(post.content)}</div>
+      <div class="doc-tags">${tags.map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}</div>
+    `;
+  }
+
+  function selectPost(id) {
+    state.selectedId = id;
+    const post = state.posts.find(p => String(p.id) === String(id));
+    if (post) renderDetail(post);
+    buildNav();
+    // 모바일: 글 선택하면 사이드바 닫기
+    sidebar.classList.remove('open'); scrim.classList.remove('show');
+  }
+
+  function sortPosts(posts) {
+    return posts.slice().sort((a, b) => {
+      if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+  }
+
+  function filterPosts(posts, q) {
+    if (!q) return posts;
+    const needle = q.toLowerCase();
+    return posts.filter(p =>
+      (p.title || '').toLowerCase().includes(needle) ||
+      (p.content || '').toLowerCase().includes(needle) ||
+      (p.tags || '').toLowerCase().includes(needle)
+    );
+  }
+
+  async function loadPosts() {
+    try {
+      // 캐시 방지: 깃헙에 커밋한 posts.json 최신 내용을 바로 반영하기 위해 캐시버스터를 붙입니다.
+      const res = await fetch(`${DATA_URL}?v=${Date.now()}`);
+      if (!res.ok) throw new Error(`posts.json을 불러오지 못했습니다 (HTTP ${res.status})`);
+      const data = await res.json();
+
+      state.posts = sortPosts(Array.isArray(data) ? data : []);
+      state.filtered = filterPosts(state.posts, state.query);
+      buildNav();
+    } catch (err) {
+      console.error(err);
+      navScroll.innerHTML = `<div class="nav-empty">불러오기 실패<br><small>${escapeHtml(err.message)}</small></div>`;
+    }
+  }
+
+  searchInput.addEventListener('input', () => {
+    state.query = searchInput.value.trim();
+    state.filtered = filterPosts(state.posts, state.query);
+    buildNav();
+  });
+
+  function resetWriteModal() {
+    document.getElementById('writeForm').reset();
+    document.getElementById('writeForm').style.display = '';
+    document.getElementById('writeResultBox').classList.remove('show');
+  }
+
+  document.getElementById('openWriteBtn').addEventListener('click', () => {
+    resetWriteModal();
+    openModal('writeOverlay');
+  });
+  document.getElementById('writeAgainBtn').addEventListener('click', resetWriteModal);
+
+  document.getElementById('writeForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const now = new Date();
+    const post = {
+      id: 'post-' + now.getTime(),
+      category: document.getElementById('fCategory').value,
+      subcategory: document.getElementById('fSubcategory').value,
+      title: document.getElementById('fTitle').value,
+      content: document.getElementById('fContent').value,
+      author: document.getElementById('fAuthor').value || '익명',
+      tags: document.getElementById('fTags').value,
+      createdAt: now.toISOString().slice(0, 10),
+      pinned: document.getElementById('fPinned').checked,
+    };
+
+    const json = JSON.stringify(post, null, 2) + ',';
+    document.getElementById('writeResultJson').textContent = json;
+    document.getElementById('writeForm').style.display = 'none';
+    document.getElementById('writeResultBox').classList.add('show');
+  });
+
+  document.getElementById('copyJsonBtn').addEventListener('click', async () => {
+    const text = document.getElementById('writeResultJson').textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('복사했어요. posts.json에 붙여넣고 커밋하세요.');
+    } catch (err) {
+      showToast('복사에 실패했어요. 직접 드래그해서 복사해주세요.');
+    }
+  });
+
+  loadPosts();
+</script>
+</body>
+</html>
