@@ -1,0 +1,101 @@
+[
+  {
+    "id": "post-example-guide",
+    "category": "이슈/공지",
+    "subcategory": "",
+    "title": "게시판 사용법 안내",
+    "content": "이 게시판은 구글 시트 없이 깃헙 저장소만으로 운영됩니다.\n\n1) 왼쪽 상단 \"+ 새 글 등록\" 버튼을 눌러 내용을 입력하면 붙여넣을 JSON이 자동으로 만들어집니다.\n2) 이 저장소의 posts.json 파일을 열고(연필 아이콘으로 수정), 맨 앞 [ 바로 다음에 복사한 내용을 붙여넣습니다.\n3) 커밋(Commit changes)하면 몇 초 뒤 사이트에 새 글이 반영됩니다.\n\n**카테고리**는 왼쪽 사이드바의 큰 그룹이에요 (예: 입고, B2B, 주문, 온보딩). 자유롭게 새 이름으로 만들어도 자동으로 그룹이 생깁니다. **소분류**는 한 카테고리 안에서 글이 많아졌을 때만 더 잘게 묶고 싶을 때 쓰세요.\n\n**내용 칸에는 마크다운을 쓸 수 있어요.** 글쓰기 화면의 \"📊 표 삽입 / ⚔️ 2개 비교(VS) 삽입 / 🗂 여러 개 비교 삽입\" 버튼을 누르면 커서 위치에 서식 틀이 자동으로 들어가요. 아래 두 예시 글(\"직계약 vs B2B 입점 비교\", \"주문 채널별 비교\")을 참고하세요.\n\n직접 문법을 쓰고 싶다면:\n\n| 문법 | 결과 |\n| --- | --- |\n| `**굵게**` | 굵게 |\n| `- 항목` | 목록 |\n| `\\| a \\| b \\|` 줄 + `\\| --- \\| --- \\|` 줄 | 표 |\n\n수정이나 삭제도 같은 방식으로 posts.json에서 직접 편집하면 됩니다.",
+    "author": "관리자",
+    "tags": "사용법,안내",
+    "createdAt": "2026-09-14",
+    "pinned": true
+  },
+  {
+    "id": "post-example-inbound-1",
+    "category": "입고",
+    "subcategory": "",
+    "title": "입고예약방법",
+    "content": "여기에 입고예약방법 내용을 채워주세요.\n\n예시 구조:\n1. 예약 화면 경로\n2. 필수 입력 항목\n3. 주의사항",
+    "author": "관리자",
+    "tags": "입고,예약",
+    "createdAt": "2026-09-14",
+    "pinned": false
+  },
+  {
+    "id": "post-example-inbound-2",
+    "category": "입고",
+    "subcategory": "",
+    "title": "입고예약/변경/취소",
+    "content": "예약 변경·취소 절차를 여기에 정리해주세요.",
+    "author": "관리자",
+    "tags": "입고,변경,취소",
+    "createdAt": "2026-09-14",
+    "pinned": false
+  },
+  {
+    "id": "post-example-inbound-3",
+    "category": "입고",
+    "subcategory": "",
+    "title": "당일 입고 불가 CASE",
+    "content": "당일 입고가 불가능한 케이스들을 여기에 정리해주세요.\n\n- 케이스1\n- 케이스2",
+    "author": "관리자",
+    "tags": "입고,예외",
+    "createdAt": "2026-09-14",
+    "pinned": false
+  },
+  {
+    "id": "post-example-inbound-4",
+    "category": "입고",
+    "subcategory": "",
+    "title": "긴급입고",
+    "content": "긴급입고 절차와 조건을 여기에 정리해주세요.",
+    "author": "관리자",
+    "tags": "입고,긴급",
+    "createdAt": "2026-09-14",
+    "pinned": false
+  },
+  {
+    "id": "post-example-inbound-5",
+    "category": "입고",
+    "subcategory": "",
+    "title": "입고 상태 비교",
+    "content": "표로 정리하면 이렇게 보여요. 아래 표를 실제 내용으로 바꿔주세요.\n\n| 상태 | 의미 | 처리 방법 |\n| --- | --- | --- |\n| 예약완료 | 입고 예약이 잡힌 상태 | 입고일 전날까지 변경 가능 |\n| 입고중 | 센터에서 검수 진행 중 | 별도 조치 불필요 |\n| 입고완료 | 검수 및 등록 완료 | 재고 반영 확인 |\n| 보류 | 서류/수량 불일치 | 담당자 확인 후 재처리 |",
+    "author": "관리자",
+    "tags": "입고,상태",
+    "createdAt": "2026-09-14",
+    "pinned": false
+  },
+  {
+    "id": "post-example-onboarding-1",
+    "category": "온보딩",
+    "subcategory": "",
+    "title": "직계약 vs B2B 입점 비교",
+    "content": "신규 셀러가 어떤 방식으로 들어오는지에 따라 처리 기준이 달라요. 아래는 예시이니 실제 기준으로 바꿔주세요.\n\n<div class=\"compare-vs-wrap\">\n  <div class=\"compare-card is-featured\">\n    <div class=\"compare-card-head\">직계약 입점</div>\n    <ul>\n      <li><b>계약 주체</b>: 품고와 직접 계약</li>\n      <li><b>정산 주기</b>: 매주 정산</li>\n      <li><b>초도입고 지원</b>: ✅ 담당자 배정</li>\n    </ul>\n  </div>\n  <div class=\"compare-vs\">VS</div>\n  <div class=\"compare-card\">\n    <div class=\"compare-card-head\">B2B 입점</div>\n    <ul>\n      <li><b>계약 주체</b>: 파트너사 경유</li>\n      <li><b>정산 주기</b>: 월 1회 정산</li>\n      <li><b>초도입고 지원</b>: ❌ 파트너사 안내</li>\n    </ul>\n  </div>\n</div>\n\n표로 보면 이렇게도 정리할 수 있어요.\n\n| 구분 | 직계약 | B2B |\n| --- | --- | --- |\n| 계약 주체 | 품고 | 파트너사 |\n| 정산 주기 | 주 1회 | 월 1회 |",
+    "author": "관리자",
+    "tags": "온보딩,비교",
+    "createdAt": "2026-09-14",
+    "pinned": false
+  },
+  {
+    "id": "post-example-order-1",
+    "category": "주문",
+    "subcategory": "",
+    "title": "주문 채널별 비교",
+    "content": "주문이 들어오는 채널별로 처리 기준을 비교하면 아래처럼 카드로 정리할 수 있어요.\n\n<div class=\"compare-grid\">\n  <div class=\"compare-card\">\n    <div class=\"compare-card-head\">네이버 (N배송)</div>\n    <ul>\n      <li><b>정산</b>: 매주 정산</li>\n      <li><b>출고 기한</b>: 당일 15시</li>\n      <li><b>반품</b>: 센터 직접 회수</li>\n    </ul>\n  </div>\n  <div class=\"compare-card\">\n    <div class=\"compare-card-head\">자사몰</div>\n    <ul>\n      <li><b>정산</b>: 월 1회</li>\n      <li><b>출고 기한</b>: 익일 12시</li>\n      <li><b>반품</b>: 셀러 별도 접수</li>\n    </ul>\n  </div>\n  <div class=\"compare-card\">\n    <div class=\"compare-card-head\">B2B</div>\n    <ul>\n      <li><b>정산</b>: 월 1회</li>\n      <li><b>출고 기한</b>: 협의 후 지정</li>\n      <li><b>반품</b>: 파트너사 경유</li>\n    </ul>\n  </div>\n</div>",
+    "author": "관리자",
+    "tags": "주문,비교",
+    "createdAt": "2026-09-14",
+    "pinned": false
+  },
+  {
+    "id": "post-example-b2b-1",
+    "category": "B2B",
+    "subcategory": "",
+    "title": "B2B 주문 처리 기준 (예시)",
+    "content": "B2B 관련 내용을 여기에 채워주세요.",
+    "author": "관리자",
+    "tags": "B2B",
+    "createdAt": "2026-09-14",
+    "pinned": false
+  }
+]
