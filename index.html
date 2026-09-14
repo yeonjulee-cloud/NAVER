@@ -53,9 +53,11 @@
     font-weight: 800;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     margin: 0 0 12px;
   }
+  .logo-img { height: 20px; width: auto; display: block; }
+  .topbar .logo-img { height: 18px; }
   .search-box {
     position: relative;
   }
@@ -168,7 +170,8 @@
     text-align: center;
     color: var(--text-sub);
   }
-  .empty-state .big { font-size: 40px; margin-bottom: 14px; }
+  .empty-state .big { margin-bottom: 14px; }
+  .empty-state .big img { height: 52px; width: auto; }
   .empty-state h2 { font-size: 17px; color: var(--text); margin: 0 0 8px; }
   .empty-state p { font-size: 13.5px; line-height: 1.6; margin: 0; }
 
@@ -259,7 +262,7 @@
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <p class="sidebar-title">FBN 운영 가이드</p>
+      <p class="sidebar-title"><img class="logo-img" src="nlogo.png" alt="FBN" /> FBN 운영 가이드</p>
       <div class="search-box">
         <input id="searchInput" type="text" placeholder="검색" />
       </div>
@@ -273,11 +276,12 @@
   <div class="main">
     <div class="topbar">
       <button class="hamburger" id="hamburgerBtn">☰</button>
+      <img class="logo-img" src="nlogo.png" alt="FBN" />
       <span class="topbar-title">FBN 운영 가이드</span>
     </div>
     <div class="content" id="content">
       <div class="empty-state">
-        <div class="big">📘</div>
+        <div class="big"><img src="nlogo.png" alt="FBN" /></div>
         <h2>왼쪽에서 글을 선택하세요</h2>
         <p>매뉴얼과 이슈·공지가 왼쪽 사이드바에 정리되어 있어요. 클릭하면 여기 오른쪽에 바로 내용이 나옵니다.</p>
       </div>
